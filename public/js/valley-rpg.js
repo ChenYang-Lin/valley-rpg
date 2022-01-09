@@ -1,8 +1,9 @@
-import MainScene from "./MainScene.js";
-// import InventoryScene from "./InventoryScene.js";
-// import CraftingScene from "./CraftingScene.js";
+/** @type {import("../phaser/typings/phaser")} */
 
-let zoom = 1;
+import StartScene from "./scenes/StartScene.js";
+import { zoom } from "./utils.js";
+
+// let zoom = 2.7;
 
 const config = {
     width: window.innerWidth / zoom,
@@ -10,11 +11,14 @@ const config = {
     backgroundColor: "#999999",
     type: Phaser.AUTO,
     parent: "valley-rpg",
-    scene: [MainScene],
+    scene: [StartScene],
     scale: {
         zoom: zoom,
     },
     pixelArt: true,
+    // render: {
+    //     pixelArt: true,
+    // },
     physics: {
         default: "matter",
         matter: {
@@ -26,8 +30,8 @@ const config = {
         scene: [
             {
                 plugin: PhaserMatterCollisionPlugin.default,
-                key: "mattercollision",
-                mapping: "mattercollision",
+                key: 'matterCollision',
+                mapping: 'matterCollision',
             }
         ]
     }
