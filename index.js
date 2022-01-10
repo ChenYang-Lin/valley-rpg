@@ -11,6 +11,7 @@ const io = new Server(server);
 
 // Middlewares
 app.use('/socket.io', express.static(__dirname + '/node_modules/socket.io-client/dist'));
+app.use('/node_modules', express.static(__dirname + '/node_modules'));
 app.use('/', express.static(__dirname + "/public"));
 
 SOCKET_LIST = {};

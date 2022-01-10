@@ -7,11 +7,13 @@ export default class ValleyScene extends Phaser.Scene {
         this.sceneChangers = [];
         this.camera;
         this.inRange = true;
+        this.mouseActive = false;
     }
 
     preload() {
 
-
+        let url = 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js';
+        this.load.plugin('rexvirtualjoystickplugin', url, true);
     }
 
     create() {
@@ -80,34 +82,59 @@ export default class ValleyScene extends Phaser.Scene {
 
 
         // Test change scene
+        // this.input.keyboard.on("keydown-E", () => {
+        //     this.scene.start("MenuScene");
+        // })
         this.input.keyboard.on("keydown-E", () => {
-            this.scene.start("MenuScene");
+            // this.crafting.craft();
+            console.log("E key down")
+            this.mouseActive = !this.mouseActive;
         })
 
+        // JoyStick
+        this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
+            x: 40,
+            y: this.game.renderer.height - 40,
+            depth: 10,
+            radius: 20,
+            base: this.add.circle(0, 0, 20, 0x888888),
+            thumb: this.add.circle(0, 0, 10, 0xcccccc),
+        })
+            .on('update', this.dumpJoyStickState, this)
+        // .setDepth(0);
+
+    }
+
+    dumpJoyStickState() {
+        var cursorKeys = this.joyStick.createCursorKeys();
+        this.player.joyStickUpdate(cursorKeys);
     }
 
     update(number, delta) {
         // this.enemies.forEach(enemy => enemy.update());
-        this.player.update(number, delta);
+        this.player.update(number, delta, this.mouseActive);
 
         // Mouse position
-        // console.log(this.camera.worldView);
-        let x = this.input.mousePointer.x + this.camera.worldView.x;
-        let y = this.input.mousePointer.y + this.camera.worldView.y;
-        let offsetX = x % 32;
-        let offsetY = y % 32;
-        x = x - offsetX + 16;
-        y = y - offsetY + 16;
-        this.cursorRect.x = x;
-        this.cursorRect.y = y;
-        // Valid input - cursor color
-        if (Math.abs(this.player.x - x) < 32 && Math.abs(this.player.y - y) < 32) {
-            this.inRange = true;
-            this.cursorRect.tint = 0x00ff00;
+        if (this.mouseActive) {
+            // console.log(this.camera.worldView);
+            let x = this.input.mousePointer.x + this.camera.worldView.x;
+            let y = this.input.mousePointer.y + this.camera.worldView.y;
+            let offsetX = x % 32;
+            let offsetY = y % 32;
+            x = x - offsetX + 16;
+            y = y - offsetY + 16;
+            this.cursorRect.x = x;
+            this.cursorRect.y = y;
+            // Valid input - cursor color
+            if (Math.abs(this.player.x - x) < 32 && Math.abs(this.player.y - y) < 32) {
+                this.inRange = true;
+                this.cursorRect.tint = 0x00ff00;
+            }
+            else {
+                this.inRange = false;
+                this.cursorRect.tint = 0xff0000;
+            }
         }
-        else {
-            this.inRange = false;
-            this.cursorRect.tint = 0xff0000;
-        }
+
     }
 }

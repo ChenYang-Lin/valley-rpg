@@ -13,6 +13,12 @@ export default class Player extends MatterEntity {
         this.weaponRotation = 0;
         this.setScale(.5); // change from 64 x 64 to 32 x 32;
 
+        // JoyStick movement
+        this.joyLeft = false;
+        this.joyRight = false;
+        this.joyUp = false;
+        this.joyDown = false;
+
         // Collision bodies
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         let playerCollider = Bodies.circle(this.x, this.y + 10, 5, { isSensor: false, label: "playerCollider" });
@@ -47,9 +53,10 @@ export default class Player extends MatterEntity {
         scene.load.spritesheet("items", "assets/images/items.png", { frameWidth: 32, frameHeight: 32 });
         // Audios
         scene.load.audio('player', 'assets/audio/player.mp3');
+
     }
 
-    update(time, delta) { // delta 16.666 @ 60fps
+    update(time, delta, mouseActive) { // delta 16.666 @ 60fps
         // console.log(delta);
 
         // weapon move along with player
@@ -63,13 +70,13 @@ export default class Player extends MatterEntity {
         let playerVelocity = new Phaser.Math.Vector2();
 
         // Key down
-        if (this.inputKeys.left.isDown)
+        if (this.inputKeys.left.isDown || this.joyLeft)
             playerVelocity.x -= 1;
-        if (this.inputKeys.right.isDown)
+        if (this.inputKeys.right.isDown || this.joyRight)
             playerVelocity.x += 1;
-        if (this.inputKeys.up.isDown)
+        if (this.inputKeys.up.isDown || this.joyUp)
             playerVelocity.y -= 1;
-        if (this.inputKeys.down.isDown)
+        if (this.inputKeys.down.isDown || this.joyDown)
             playerVelocity.y += 1;
 
         playerVelocity.normalize();
@@ -96,8 +103,10 @@ export default class Player extends MatterEntity {
         }
 
         // Basic Attack
+        // console.log(this.scene.input.activePointer)
         if (!this.attacking && this.scene.input.activePointer.isDown) {
-            this.attack();
+            if (mouseActive)
+                this.attack();
         }
 
         // Attack
@@ -109,15 +118,23 @@ export default class Player extends MatterEntity {
             this.spriteWeapon.setAngle(this.weaponRotation);
         }
 
-        console.log(this.attackCD);
         if (this.attackCD <= 0) {
             this.attacking = false;
             this.weaponRotation = 0;
             this.spriteWeapon.setAngle(this.weaponRotation);
         }
+    }
 
-
-
+    joyStickUpdate(cursorKeys) {
+        this.joyLeft = false; this.joyRight = false; this.joyUp = false; this.joyDown = false;
+        for (let name in cursorKeys) {
+            if (cursorKeys[name].isDown) {
+                if (name === "left") this.joyLeft = true;
+                if (name === "right") this.joyRight = true;
+                if (name === "up") this.joyUp = true;
+                if (name === "down") this.joyDown = true;
+            }
+        }
     }
 
     attack() {

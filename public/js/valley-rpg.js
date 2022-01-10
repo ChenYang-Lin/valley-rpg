@@ -33,7 +33,7 @@ const config = {
                 key: 'matterCollision',
                 mapping: 'matterCollision',
             }
-        ]
+        ],
     }
 }
 
