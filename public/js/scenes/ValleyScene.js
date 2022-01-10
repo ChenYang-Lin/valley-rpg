@@ -95,13 +95,20 @@ export default class ValleyScene extends Phaser.Scene {
         this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
             x: 40,
             y: this.game.renderer.height - 40,
-            depth: 10,
+            width: 50,
+            height: 50,
             radius: 20,
             base: this.add.circle(0, 0, 20, 0x888888),
             thumb: this.add.circle(0, 0, 10, 0xcccccc),
+            // dir: '8dir',
+            forceMin: 0,
+            // fixed: true,
+            // enable: true
+
         })
             .on('update', this.dumpJoyStickState, this)
-        // .setDepth(0);
+        this.joyStick.base.setDepth(10);
+        this.joyStick.thumb.setDepth(10);
 
     }
 

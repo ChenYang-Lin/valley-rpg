@@ -10,4 +10,5 @@ body {
 
 #joystick {
   position: absolute;
+  z-index: 10;
 }

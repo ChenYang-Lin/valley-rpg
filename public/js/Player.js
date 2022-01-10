@@ -126,15 +126,11 @@ export default class Player extends MatterEntity {
     }
 
     joyStickUpdate(cursorKeys) {
-        this.joyLeft = false; this.joyRight = false; this.joyUp = false; this.joyDown = false;
-        for (let name in cursorKeys) {
-            if (cursorKeys[name].isDown) {
-                if (name === "left") this.joyLeft = true;
-                if (name === "right") this.joyRight = true;
-                if (name === "up") this.joyUp = true;
-                if (name === "down") this.joyDown = true;
-            }
-        }
+        this.joyLeft = cursorKeys.left.isDown;
+        this.joyRight = cursorKeys.right.isDown;
+        this.joyUp = cursorKeys.up.isDown;
+        this.joyDown = cursorKeys.down.isDown;
+
     }
 
     attack() {
