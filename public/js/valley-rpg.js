@@ -1,7 +1,7 @@
 /** @type {import("../phaser/typings/phaser")} */
 
 import StartScene from "./scenes/StartScene.js";
-import { zoom } from "./utils.js";
+import { zoom } from "./utils/utils.js";
 
 // let zoom = 2.7;
 

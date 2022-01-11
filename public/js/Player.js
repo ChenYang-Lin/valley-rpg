@@ -1,4 +1,5 @@
 import MatterEntity from "./MatterEntity.js";
+import Inventory from "./Inventory.js";
 
 export default class Player extends MatterEntity {
     constructor(data) {
@@ -12,6 +13,8 @@ export default class Player extends MatterEntity {
         this.attackCD = 0;
         this.weaponRotation = 0;
         this.setScale(.5); // change from 64 x 64 to 32 x 32;
+
+        this.inventory = new Inventory();
 
         // JoyStick movement
         this.joyLeft = false;
@@ -32,7 +35,8 @@ export default class Player extends MatterEntity {
 
         // Resource Collisions
         this.changeSceneCollisions(playerCollider);
-        // this.pickupCollisions(playerCollider);
+        this.createPickupCollisions(playerCollider);
+        this.createMiningCollisions(playerSensor);
 
         // Weapon
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, 'items', 162);
@@ -116,13 +120,24 @@ export default class Player extends MatterEntity {
             let currRotation = (timePassed * (1 / this.attackSpd)) * 100;
             this.weaponRotation += currRotation;
             this.spriteWeapon.setAngle(this.weaponRotation);
+
+            if (this.attackCD <= 0) {
+                this.attacking = false;
+                this.weaponRotation = 0;
+                this.spriteWeapon.setAngle(this.weaponRotation);
+                this.whackStuff();
+            }
         }
 
-        if (this.attackCD <= 0) {
-            this.attacking = false;
-            this.weaponRotation = 0;
-            this.spriteWeapon.setAngle(this.weaponRotation);
-        }
+
+    }
+
+    whackStuff() {
+        this.touching = this.touching.filter(gameObject => gameObject.hit && !gameObject.dead);
+        this.touching.forEach(gameObject => {
+            gameObject.hit();
+            if (gameObject.dead) gameObject.destroy();
+        })
     }
 
     joyStickUpdate(cursorKeys) {
@@ -148,6 +163,43 @@ export default class Player extends MatterEntity {
                     this.scene.scene.start(other.gameObjectB.nextScene);
                 }
             }
+        })
+    }
+
+    createPickupCollisions(playerCollider) {
+        this.scene.matterCollision.addOnCollideStart({
+            objectA: [playerCollider],
+            callback: other => {
+                // console.log("start");
+                if (other.gameObjectB && other.gameObjectB.pickup) {
+                    if (other.gameObjectB.pickup()) {
+                        this.inventory.addItem({ name: other.gameObjectB.name, quantity: 1 })
+                        console.log("picked up: " + other.gameObjectB.name);
+                    }
+                }
+            },
+            context: this.scene,
+        })
+    }
+
+    createMiningCollisions(playerSensor) {
+        this.scene.matterCollision.addOnCollideStart({
+            objectA: [playerSensor],
+            callback: other => {
+                if (other.bodyB.isSensor) return;
+                this.touching.push(other.gameObjectB);
+                // console.log(this.touching.length, other.gameObjectB.name)
+            },
+            context: this.scene,
+        })
+
+        this.scene.matterCollision.addOnCollideEnd({
+            objectA: [playerSensor],
+            callback: other => {
+                this.touching = this.touching.filter(gameObject => gameObject != other.gameObjectB);
+                // console.log(this.touching.length);
+            },
+            context: this.scene,
         })
     }
 }

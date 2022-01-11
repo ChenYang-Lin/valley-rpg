@@ -1,4 +1,5 @@
-
+import DropItem from "./DropItem.js";
+import items from "./utils/Items.js";
 
 export default class MatterEntity extends Phaser.Physics.Matter.Sprite {
     constructor(data) {
@@ -38,7 +39,7 @@ export default class MatterEntity extends Phaser.Physics.Matter.Sprite {
         if (this.dead) {
             this.onDeath();
             this.drops.forEach(drop => {
-                // new DropItem({ name: drop, scene: this.scene, x: this.x, y: this.y, frame: items[drop].frame })
+                new DropItem({ name: drop, scene: this.scene, x: this.x, y: this.y, frame: items[drop].frame })
             });
         }
     }

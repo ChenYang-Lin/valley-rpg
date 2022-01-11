@@ -91,6 +91,7 @@ export default class ValleyScene extends Phaser.Scene {
             this.mouseActive = !this.mouseActive;
         })
 
+
         // JoyStick
         this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
             x: 40,
@@ -109,6 +110,9 @@ export default class ValleyScene extends Phaser.Scene {
             .on('update', this.dumpJoyStickState, this)
         this.joyStick.base.setDepth(10);
         this.joyStick.thumb.setDepth(10);
+
+        // Inventory Scene
+        this.scene.launch("InventoryScene", { mainScene: this });
 
     }
 
