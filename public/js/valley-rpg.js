@@ -1,19 +1,22 @@
 /** @type {import("../phaser/typings/phaser")} */
 
 import StartScene from "./scenes/StartScene.js";
-import { zoom } from "./utils/utils.js";
+import { zoom, width, height } from "./utils/utils.js";
 
 // let zoom = 2.7;
 
 const config = {
-    width: window.innerWidth / zoom,
-    height: window.innerHeight / zoom,
+    width: width,
+    height: height,
     backgroundColor: "#999999",
     type: Phaser.AUTO,
     parent: "valley-rpg",
     scene: [StartScene],
     scale: {
         zoom: zoom,
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+
     },
     pixelArt: true,
     // render: {
@@ -40,9 +43,9 @@ const config = {
 const game = new Phaser.Game(config);
 
 // Resize Display
-window.addEventListener('resize', () => {
-    game.scale.resize(window.innerWidth / zoom, window.innerHeight / zoom);
-});
+// window.addEventListener('resize', () => {
+//     game.scale.resize(window.innerWidth / zoom, window.innerHeight / zoom);
+// });
 
 // Full Screen
 document.querySelector("#fullscreen").addEventListener("click", toggleFullScreen);

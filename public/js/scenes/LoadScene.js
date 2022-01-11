@@ -3,6 +3,7 @@ import ValleyScene from "./ValleyScene.js";
 import Player from "../Player.js";
 import Resource from "../Resource.js";
 import InventoryScene from "./InventoryScene.js";
+import InventoryWindow from "./InventoryWindow.js";
 
 export default class LoadScene extends Phaser.Scene {
     constructor() {
@@ -68,6 +69,7 @@ export default class LoadScene extends Phaser.Scene {
         this.scene.add("MenuScene", MenuScene, false); // auto start = false
         this.scene.add("ValleyScene", ValleyScene, false); // auto start = false
         this.scene.add("InventoryScene", InventoryScene, false); // auto start = false
+        this.scene.add("InventoryWindow", InventoryWindow, false); // auto start = false
         this.scene.start("MenuScene");
     }
 }
