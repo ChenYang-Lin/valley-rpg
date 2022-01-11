@@ -1,9 +1,7 @@
 /** @type {import("../phaser/typings/phaser")} */
 
 import StartScene from "./scenes/StartScene.js";
-import { zoom, width, height } from "./utils/utils.js";
-
-// let zoom = 2.7;
+import { width, height } from "./utils/utils.js";
 
 const config = {
     width: width,
@@ -13,7 +11,6 @@ const config = {
     parent: "valley-rpg",
     scene: [StartScene],
     scale: {
-        zoom: zoom,
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
 
@@ -70,3 +67,10 @@ function toggleFullScreen() {
     }
 }
 
+
+// Check device
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    console.log("this device is mobile")
+} else {
+    console.log("this device is desktop")
+}
