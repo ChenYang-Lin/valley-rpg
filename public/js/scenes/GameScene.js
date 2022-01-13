@@ -1,10 +1,9 @@
 import Player from "../Player.js";
 import Resource from "../Resource.js";
-import { setCurrScene } from "../utils/utils.js";
+import { setCurrScene, getMobile } from "../utils/utils.js";
 
 export default class GameScene extends Phaser.Scene {
-    constructor() {
-        const name = "Valley"
+    constructor(name) {
         super(name + "Scene");
         this.name = name + "Scene";
         this.tilemapKey = name;
@@ -14,6 +13,7 @@ export default class GameScene extends Phaser.Scene {
         this.inRange = true;
         this.mouseActive = true;
         this.isInventoryOpen = false;
+        this.isMobile = getMobile();
     }
 
     preload() {
@@ -51,10 +51,16 @@ export default class GameScene extends Phaser.Scene {
         const map = this.make.tilemap({ key: this.tilemapKey });
         console.log(map)
         this.map = map;
+
         const tileset = map.addTilesetImage("RPG Nature Tileset", "tiles");
         let base = map.createLayer("Base", tileset, 0, 0);
         base.setCollisionByProperty({ collides: true });
         this.matter.world.convertTilemapLayer(base);
+
+        const houseTileset = map.addTilesetImage("house Tilesets", "houseTiles");
+        let structure = map.createLayer("Structure", houseTileset, 0, 0);
+        structure.setCollisionByProperty({ collides: true });
+        this.matter.world.convertTilemapLayer(structure);
 
         // Resources
         const resources = this.map.getObjectLayer("Resources");
@@ -63,6 +69,7 @@ export default class GameScene extends Phaser.Scene {
         }).forEach(resource => {
             new Resource({ scene: this, resource });
         });
+
 
         // Player
         this.player = new Player({ scene: this, x: 100, y: 100 });
@@ -113,21 +120,23 @@ export default class GameScene extends Phaser.Scene {
 
 
         // JoyStick
-        // this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
-        //     x: 60,
-        //     y: this.game.renderer.height - 60,
-        //     radius: 30,
-        //     base: this.add.circle(0, 0, 40, 0x888888, 0.8),
-        //     thumb: this.add.circle(0, 0, 20, 0xcccccc, 0.8),
-        //     // dir: '8dir',
-        //     forceMin: 0,
-        //     // fixed: true,
-        //     // enable: true
+        if (this.isMobile) {
+            this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
+                x: 60,
+                y: this.game.renderer.height - 60,
+                radius: 30,
+                base: this.add.circle(0, 0, 40, 0x888888, 0.8),
+                thumb: this.add.circle(0, 0, 20, 0xcccccc, 0.8),
+                // dir: '8dir',
+                forceMin: 0,
+                // fixed: true,
+                // enable: true
 
-        // })
-        //     .on('update', this.dumpJoyStickState, this)
-        // this.joyStick.base.setDepth(10);
-        // this.joyStick.thumb.setDepth(10);
+            })
+                .on('update', this.dumpJoyStickState, this)
+            this.joyStick.base.setDepth(10);
+            this.joyStick.thumb.setDepth(10);
+        }
 
     }
 
