@@ -1,23 +1,30 @@
 import Player from "../Player.js";
 import Resource from "../Resource.js";
+import { setCurrScene, getMobile } from "../utils/utils.js";
 
 export default class ValleyScene extends Phaser.Scene {
     constructor() {
-        super("ValleyScene");
+        const name = "Valley"
+        super(name + "Scene");
+        this.name = name + "Scene";
+        this.tilemapKey = name;
+
         this.sceneChangers = [];
         this.camera;
         this.inRange = true;
-        this.mouseActive = false;
+        this.mouseActive = true;
         this.isInventoryOpen = false;
+        this.isMobile = getMobile();
     }
 
     preload() {
 
-        let url = 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js';
-        this.load.plugin('rexvirtualjoystickplugin', url, true);
     }
 
     create() {
+        console.log("current scene: ", this.name);
+        setCurrScene(this.name);
+
         // Cursor Rectangle  
         this.cursorRect = new Phaser.Physics.Matter.Sprite(this.matter.world, 0, 0, "items", 11);
         // this.cursorRect.tint = 0xff0000;
@@ -42,7 +49,7 @@ export default class ValleyScene extends Phaser.Scene {
         })
 
         // Tilemap
-        const map = this.make.tilemap({ key: 'valley' });
+        const map = this.make.tilemap({ key: this.tilemapKey });
         console.log(map)
         this.map = map;
         const tileset = map.addTilesetImage("RPG Nature Tileset", "tiles");
@@ -98,7 +105,7 @@ export default class ValleyScene extends Phaser.Scene {
             // this.refresh();
             if (this.isInventoryOpen) {
                 this.isInventoryOpen = false;
-                this.scene.sleep("InventoryWindow");
+                this.scene.stop("InventoryWindow");
             } else {
                 this.isInventoryOpen = true;
                 this.scene.launch("InventoryWindow", { mainScene: this });
@@ -107,25 +114,23 @@ export default class ValleyScene extends Phaser.Scene {
 
 
         // JoyStick
-        this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
-            x: 60,
-            y: this.game.renderer.height - 60,
-            radius: 30,
-            base: this.add.circle(0, 0, 40, 0x888888),
-            thumb: this.add.circle(0, 0, 20, 0xcccccc),
-            // dir: '8dir',
-            forceMin: 0,
-            // fixed: true,
-            // enable: true
+        if (this.isMobile) {
+            this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
+                x: 60,
+                y: this.game.renderer.height - 60,
+                radius: 30,
+                base: this.add.circle(0, 0, 40, 0x888888, 0.8),
+                thumb: this.add.circle(0, 0, 20, 0xcccccc, 0.8),
+                // dir: '8dir',
+                forceMin: 0,
+                // fixed: true,
+                // enable: true
 
-        })
-            .on('update', this.dumpJoyStickState, this)
-        this.joyStick.base.setDepth(10);
-        this.joyStick.thumb.setDepth(10);
-
-        // Inventory Scene
-        // this.scene.launch("InventoryScene", { mainScene: this });
-        // this.scene.launch("InventoryWindow", { mainScene: this });
+            })
+                .on('update', this.dumpJoyStickState, this)
+            this.joyStick.base.setDepth(10);
+            this.joyStick.thumb.setDepth(10);
+        }
 
     }
 

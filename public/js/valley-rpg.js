@@ -1,7 +1,7 @@
 /** @type {import("../phaser/typings/phaser")} */
 
 import StartScene from "./scenes/StartScene.js";
-import { width, height } from "./utils/utils.js";
+import { width, height, setMobile } from "./utils/utils.js";
 
 const config = {
     width: width,
@@ -70,7 +70,9 @@ function toggleFullScreen() {
 
 // Check device
 if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    console.log("this device is mobile")
+    console.log("this device is mobile");
+    setMobile(true);
 } else {
     console.log("this device is desktop")
+    setMobile(false);
 }

@@ -160,6 +160,8 @@ export default class Player extends MatterEntity {
             objectA: [playerCollider],
             callback: other => {
                 if (other.gameObjectB && other.gameObjectB.nextScene) {
+                    // console.log(other.gameObjectB.nextScene)
+                    // this.scene.scene.start("TownScene");
                     this.scene.scene.start(other.gameObjectB.nextScene);
                 }
             }

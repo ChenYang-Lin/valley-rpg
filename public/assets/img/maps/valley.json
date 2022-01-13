@@ -30,32 +30,14 @@
                         {
                          "name":"scene",
                          "type":"string",
-                         "value":"\"MenuScene\""
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":544,
-                 "y":288
-                }, 
-                {
-                 "gid":5,
-                 "height":32,
-                 "id":2,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"scene",
-                         "type":"string",
                          "value":"\"TownScene\""
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":32,
-                 "y":384
+                 "x":512,
+                 "y":288
                 }],
          "opacity":1,
          "type":"objectgroup",

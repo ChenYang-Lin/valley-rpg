@@ -1,10 +1,10 @@
 import Player from "../Player.js";
 import Resource from "../Resource.js";
-import { setCurrScene, getMobile } from "../utils/utils.js";
+import { setCurrScene } from "../utils/utils.js";
 
-export default class TownScene extends Phaser.Scene {
+export default class GameScene extends Phaser.Scene {
     constructor() {
-        const name = "Town";
+        const name = "Valley"
         super(name + "Scene");
         this.name = name + "Scene";
         this.tilemapKey = name;
@@ -14,7 +14,6 @@ export default class TownScene extends Phaser.Scene {
         this.inRange = true;
         this.mouseActive = true;
         this.isInventoryOpen = false;
-        this.isMobile = getMobile();
     }
 
     preload() {
@@ -114,23 +113,22 @@ export default class TownScene extends Phaser.Scene {
 
 
         // JoyStick
-        if (this.isMobile) {
-            this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
-                x: 60,
-                y: this.game.renderer.height - 60,
-                radius: 30,
-                base: this.add.circle(0, 0, 40, 0x888888, 0.8),
-                thumb: this.add.circle(0, 0, 20, 0xcccccc, 0.8),
-                // dir: '8dir',
-                forceMin: 0,
-                // fixed: true,
-                // enable: true
+        // this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
+        //     x: 60,
+        //     y: this.game.renderer.height - 60,
+        //     radius: 30,
+        //     base: this.add.circle(0, 0, 40, 0x888888, 0.8),
+        //     thumb: this.add.circle(0, 0, 20, 0xcccccc, 0.8),
+        //     // dir: '8dir',
+        //     forceMin: 0,
+        //     // fixed: true,
+        //     // enable: true
 
-            })
-                .on('update', this.dumpJoyStickState, this)
-            this.joyStick.base.setDepth(10);
-            this.joyStick.thumb.setDepth(10);
-        }
+        // })
+        //     .on('update', this.dumpJoyStickState, this)
+        // this.joyStick.base.setDepth(10);
+        // this.joyStick.thumb.setDepth(10);
+
     }
 
     dumpJoyStickState() {

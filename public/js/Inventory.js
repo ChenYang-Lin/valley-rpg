@@ -2,13 +2,18 @@ import items from "./utils/Items.js";
 
 export default class Inventory {
     constructor() {
-        this.maxColumns = 8;
+        this.maxColumns = 6;
         this.maxRows = 3;
+        this.maxPage = 1;
         this.selected = 0;
         this.observers = [];
 
         this.items = {
             2: { name: "stone", quantity: 2 },
+            6: { name: "fur", quantity: 3 },
+            8: { name: "meat", quantity: 1 },
+            14: { name: "health_potion", quantity: 5 },
+            15: { name: "wand_fire", quantity: 1 },
         }
         this.addItem({ name: "wood", quantity: 1 });
     }
@@ -28,7 +33,7 @@ export default class Inventory {
         if (existingKey) {
             this.items[existingKey].quantity += item.quantity;
         } else {
-            for (let i = 0; i < this.maxColumns * this.maxRows; i++) {
+            for (let i = 0; i < this.maxColumns * this.maxRows * this.maxPage; i++) {
                 let existingItem = this.items[i];
                 if (!existingItem) {
                     this.items[i] = item;
@@ -54,11 +59,34 @@ export default class Inventory {
 
     moveItem(start, end) {
         console.log(`start: ${start} end: ${end}`)
-        if (start === end || this.items[end]) return;
-        this.items[end] = this.items[start];
-        delete this.items[start];
-        this.broadcast();
+        if (start === end || this.items[end]) return false;
+        let isEquipment = this.isEquipment(end);
+        console.log(isEquipment);
+        if (!isEquipment) {
+            this.items[end] = this.items[start];
+            delete this.items[start];
+            this.broadcast();
+            return true;
+        }
+        else {
+            // if (this.equip(end))
+            //     return true;
+        }
+        return false;
     }
+
+    isEquipment(end) {
+        if (end >= 901 && end <= 906)
+            return true;
+        else
+            return false;
+    }
+
+    // equip(end) {
+    //     if (end === 901) {
+
+    //     }
+    // }
 
     get selectedItem() {
         return this.items[this.selected];
