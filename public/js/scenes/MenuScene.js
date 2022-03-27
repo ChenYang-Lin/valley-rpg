@@ -56,7 +56,7 @@ export default class MenuScene extends Phaser.Scene {
         });
         playButton.on("pointerup", () => {
             console.log("pointerup");
-            this.scene.start("ValleyScene");
+            this.scene.start("IslandScene");
         });
         playButton.on("pointerdown", () => {
             console.log("pointerdown");

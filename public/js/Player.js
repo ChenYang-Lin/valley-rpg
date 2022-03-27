@@ -3,9 +3,10 @@ import Inventory from "./Inventory.js";
 
 export default class Player extends MatterEntity {
     constructor(data) {
-        let { scene, x, y, texture, frame } = data;
+        let { scene, collisionCatSelf, collisionCatOther, isMainPlayer, x, y, texture, frame } = data;
         super({ ...data, health: 20, drops: [], name: "player" });
         this.scene = scene;
+        this.isMainPlayer = isMainPlayer
         this.touching = [];
         this.direction = data.direction || "right";
         this.attacking = false;
@@ -16,6 +17,7 @@ export default class Player extends MatterEntity {
 
         this.inventory = new Inventory();
 
+
         // JoyStick movement
         this.joyLeft = false;
         this.joyRight = false;
@@ -24,7 +26,8 @@ export default class Player extends MatterEntity {
 
         // Collision bodies
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
-        let playerCollider = Bodies.circle(this.x, this.y + 10, 5, { isSensor: false, label: "playerCollider" });
+        // let playerCollider = Bodies.circle(this.x, this.y + 10, 5, { isSensor: false, label: "playerCollider" });
+        let playerCollider = Bodies.circle(this.x, this.y, 5, { isSensor: false, label: "playerCollider" });
         let playerSensor = Bodies.circle(this.x, this.y, 24, { isSensor: true, label: "playerSensor" });
         const compoundBody = Body.create({
             parts: [playerCollider, playerSensor],
@@ -32,6 +35,10 @@ export default class Player extends MatterEntity {
         });
         this.setExistingBody(compoundBody);
         this.setFixedRotation();
+        this.setCollisionCategory(0b0010)
+        this.setCollidesWith([0b0001,])
+
+        this.setOrigin(0.5, 0.8);
 
         // Resource Collisions
         this.changeSceneCollisions(playerCollider);
@@ -41,11 +48,9 @@ export default class Player extends MatterEntity {
         // Weapon
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, 'items', 162);
         this.spriteWeapon.setScale(0.8);
-        this.spriteWeapon.setOrigin(0.25, 0.50);
+        this.spriteWeapon.setOrigin(0.25, 0.80);
         this.spriteWeapon.setDepth(1);
         this.scene.add.existing(this.spriteWeapon);
-
-
     }
 
     static preload(scene) {
@@ -60,8 +65,14 @@ export default class Player extends MatterEntity {
 
     }
 
-    update(time, delta, mouseActive) { // delta 16.666 @ 60fps
+    create() {
+    }
+
+    update(time, delta, mouseActive, socket) { // delta 16.666 @ 60fps
         // console.log(delta);
+        // console.log(this.x, this.y)
+        // console.log(this)
+
 
         // weapon move along with player
         this.spriteWeapon.setPosition(this.x, this.y);
@@ -99,11 +110,14 @@ export default class Player extends MatterEntity {
             this.direction = "left";
         }
 
-        // Animation
+        // // socket emit position && Animation
         if (Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.y) > 0.1) {
-            this.anims.play(`player_walk_${this.direction}`, true);
+            this.anims.play(`player_walk_${this.direction}`, true).setOrigin(0.5, 0.8);
+            socket.emit('playerMovement', { x:this.x, y:this.y });
+            this.depth = this.y;
+            this.spriteWeapon.depth = this.y;
         } else {
-            this.anims.play(`player_stand_${this.direction}`, true);
+            this.anims.play(`player_stand_${this.direction}`, true).setOrigin(0.5, 0.8);
         }
 
         // Basic Attack
@@ -132,11 +146,21 @@ export default class Player extends MatterEntity {
 
     }
 
+    updatePosition(x, y) {
+        this.setPosition(x, y);
+        this.spriteWeapon.setPosition(x, y)
+    }
+
+    destroyAll() {
+        this.spriteWeapon.destroy();
+        this.destroy();
+    }
+
     whackStuff() {
         this.touching = this.touching.filter(gameObject => gameObject.hit && !gameObject.dead);
         this.touching.forEach(gameObject => {
             gameObject.hit();
-            if (gameObject.dead) gameObject.destroy();
+            if (gameObject.dead) gameObject.destroySelf();
         })
     }
 
@@ -162,6 +186,7 @@ export default class Player extends MatterEntity {
                 if (other.gameObjectB && other.gameObjectB.nextScene) {
                     // console.log(other.gameObjectB.nextScene)
                     // this.scene.scene.start("TownScene");
+                    // this.scene.otherPlayers.clear();
                     this.scene.scene.start(other.gameObjectB.nextScene);
                 }
             }
@@ -191,6 +216,8 @@ export default class Player extends MatterEntity {
                 if (other.bodyB.isSensor) return;
                 this.touching.push(other.gameObjectB);
                 // console.log(this.touching.length, other.gameObjectB.name)
+                // console.log(other.gameObjectB.name, other.gameObjectB.y)
+                // console.log(other.gameObjectB.width, other.gameObjectB.height)
             },
             context: this.scene,
         })

@@ -212,6 +212,7 @@ export default class InventoryWindow extends Phaser.Scene {
         this.itemInfoPanel.push(this.infoItemTypeText);
 
     }
+    
 
     createInventoryStaticContents() {
         // Inventory Background
@@ -224,10 +225,12 @@ export default class InventoryWindow extends Phaser.Scene {
         this.headerBG.setOrigin(0, 0);
         this.headerBG.depth = -1
 
-        this.headerName = this.add.text(220, 20, "Inventory", { fill: '#FFFFFF' })
+        this.headerName = this.add.text(230, 18, "Inventory", { fill: '#FFFFFF' })
+        // this.headerName.setStroke('#333', 3)
+        // this.headerName.setShadow(2, 2, "#999", 2, true, true);
         this.headerName.setOrigin(0.5, 0);
 
-        this.closeBtn = this.add.sprite(445, 15, "inventoryCloseBtn").setInteractive();
+        this.closeBtn = this.add.sprite(445, 15, "closeBtn").setInteractive();
         this.closeBtn.setOrigin(0, 0);
         this.closeBtn.displayHeight = 20;
         this.closeBtn.displayWidth = 20;
@@ -279,7 +282,5 @@ export default class InventoryWindow extends Phaser.Scene {
     }
 
 
-    get tileSize() {
-        return this._tileSize * this.uiScale;
-    }
+
 }

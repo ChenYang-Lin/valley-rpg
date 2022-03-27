@@ -1,10 +1,14 @@
 import MenuScene from "./MenuScene.js";
-import ValleyScene from "./ValleyScene.js";
-import TownScene from "./TownScene.js";
+import ForestScene from "./ForestScene.js";
+// import TownScene from "./TownScene.js";
+import IslandScene from "./IslandScene.js";
 import Player from "../Player.js";
 import Resource from "../Resource.js";
+import Structure from "../Structure.js";
+import Enemy from "../Enemy.js";
 import InventoryScene from "./InventoryScene.js";
 import InventoryWindow from "./InventoryWindow.js";
+import ShopWindow from "./ShopWindow.js";
 
 export default class LoadScene extends Phaser.Scene {
     constructor() {
@@ -19,18 +23,21 @@ export default class LoadScene extends Phaser.Scene {
 
         Player.preload(this);
         Resource.preload(this);
+        Structure.preload(this);
+        Enemy.preload(this);
 
         // Inventory Images
-        this.load.image("inventoryCloseBtn", "assets/img/scenes/Inventory/closeBtn.png");
+        this.load.image("closeBtn", "assets/img/scenes/Inventory/closeBtn.png");
 
         // Items
         this.load.spritesheet("items", "assets/img/items.png", { frameWidth: 32, frameHeight: 32 });
 
         // Tilemap
-        this.load.image("tiles", "assets/img/maps/RPG Nature Tileset.png");
-        this.load.tilemapTiledJSON("Valley", "assets/img/maps/valley.json");
-        this.load.image("houseTiles", "assets/img/maps/house Tilesets.png");
-        this.load.tilemapTiledJSON("Town", "assets/img/maps/town.json");
+        this.load.image("all_tileset", "assets/img/maps/all_tileset.png");
+
+        this.load.tilemapTiledJSON("Forest", "assets/img/maps/forest.json");
+        // this.load.tilemapTiledJSON("Town", "assets/img/maps/town.json");
+        this.load.tilemapTiledJSON("Island", "assets/img/maps/island.json");
 
         // create loading bar
         let loadingBar = this.add.graphics({
@@ -76,11 +83,12 @@ export default class LoadScene extends Phaser.Scene {
 
     create() {
         this.scene.add("MenuScene", MenuScene, false); // auto start = false
-        this.scene.add("ValleyScene", ValleyScene, false); // auto start = false
-        this.scene.add("TownScene", TownScene, false); // auto start = false
+        this.scene.add("IslandScene", IslandScene, false); // auto start = false
+        this.scene.add("ForestScene", ForestScene, false); // auto start = false
         this.scene.add("InventoryScene", InventoryScene, false); // auto start = false
         this.scene.add("InventoryWindow", InventoryWindow, false); // auto start = false
+        this.scene.add("ShopWindow", ShopWindow, false); // auto start = false
         // this.scene.start("MenuScene");
-        this.scene.start("ValleyScene");
+        this.scene.start("IslandScene");
     }
 }

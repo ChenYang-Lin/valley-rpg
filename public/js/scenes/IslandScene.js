@@ -1,8 +1,8 @@
 import GameScene from "./GameScene.js";
 
-export default class ValleyScene extends GameScene {
+export default class Island extends GameScene {
     constructor() {
-        const name = "Valley"
+        const name = "Island"
         super(name);
     }
 
